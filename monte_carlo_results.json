@@ -1,0 +1,76 @@
+{
+  "model": "DPS-CM",
+  "iterations": 10000,
+  "seed": 42,
+  "parameters": {
+    "rbc_supply_2024": 2820.0,
+    "plt_supply_2024": 28.52,
+    "donation_rate_2024": 11.2,
+    "rbc_demand_growth": 0.025,
+    "plt_demand_growth": 0.08,
+    "plt_supply_growth": 0.015,
+    "years": 6
+  },
+  "rbc_scenarios": {
+    "baseline": {
+      "donation_rate_per_mille": 11.2,
+      "supply_2030_wan": 2820.0,
+      "deficit_probability_pct": 78.1,
+      "ci_95": [
+        77.2,
+        78.9
+      ]
+    },
+    "recovery": {
+      "donation_rate_per_mille": 12.0,
+      "supply_2030_wan": 3021.4,
+      "deficit_probability_pct": 67.1,
+      "ci_95": [
+        66.2,
+        68.0
+      ]
+    },
+    "decline": {
+      "donation_rate_per_mille": 10.0,
+      "supply_2030_wan": 2517.9,
+      "deficit_probability_pct": 91.2,
+      "ci_95": [
+        90.6,
+        91.8
+      ]
+    }
+  },
+  "platelets": {
+    "demand_2030_wan": 45.3,
+    "supply_2030_wan": 31.2,
+    "deficit_probability_pct": 96.9,
+    "ci_95": [
+      96.5,
+      97.2
+    ]
+  },
+  "cryoprecipitate": {
+    "deficit_probability_pct": 100.0,
+    "note": "whole-blood-derived by-product; supply contracts as whole-blood collection declines, demand (fibrinogen/factor) inelastic -> deterministic deficit"
+  },
+  "rbc_sensitivity": [
+    {
+      "demand_growth": 0.015,
+      "baseline": 69.2,
+      "recovery": 53.8,
+      "decline": 85.9
+    },
+    {
+      "demand_growth": 0.025,
+      "baseline": 78.2,
+      "recovery": 66.2,
+      "decline": 91.3
+    },
+    {
+      "demand_growth": 0.035,
+      "baseline": 86.0,
+      "recovery": 77.1,
+      "decline": 95.3
+    }
+  ]
+}
