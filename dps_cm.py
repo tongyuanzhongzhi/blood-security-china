@@ -65,6 +65,19 @@ YEARS = 6                        # 2024 -> 2030
 N_ITER = 10000
 SEED = 42
 
+# Demand elasticity feedback (supply constraint -> partial demand suppression)
+#   eta < 1, so D_eff = D - eta*max(0,D-S) reduces the deficit *magnitude* but
+#   does not flip the binary deficit outcome (D_eff > S  <=>  D > S).
+RBC_ETA = 0.15                 # red cells: compressible under restrictive PBM
+PLT_ETA = 0.05                 # platelets: rigid (chemo/transplant thresholds)
+
+# D-BDC demand decomposition (2024 baseline, 万 units)
+#   Total demand = classified (16-disease D-BDC matrix) + unclassified residual.
+#   Both components grow at RBC_DEMAND_GROWTH (the residual scales with overall
+#   demand, dominated by perioperative and chronic transfusion).
+RBC_CAPTURED_2024 = 1137.0     # classified demand (40.3%)
+RBC_RESIDUAL_2024 = 1683.0     # unclassified residual (59.7%)
+
 # Sensitivity: RBC demand growth bracketing (low / central / high)
 RBC_GROWTH_SENSITIVITY = [0.015, 0.025, 0.035]
 
@@ -79,11 +92,18 @@ def wilson_ci(k, n, z=1.96):
 
 
 def mc_deficit_probability(rng, demand_centre, demand_unc,
-                           supply_centre, supply_unc):
-    """Monte Carlo deficit probability: P(demand > supply)."""
+                           supply_centre, supply_unc, eta=0.0):
+    """Monte Carlo deficit probability: P(effective demand > supply).
+
+    Demand elasticity eta suppresses demand when supply is constrained,
+    D_eff = D - eta * max(0, D - S), reflecting postponed/cancelled
+    non-urgent demand. Because eta < 1, this reduces the deficit magnitude
+    but does not change the binary deficit outcome (D_eff > S <=> D > S)."""
     D = rng.normal(demand_centre, demand_centre * demand_unc, N_ITER)
     S = rng.normal(supply_centre, supply_centre * supply_unc, N_ITER)
-    k = int((D > S).sum())
+    gap = np.maximum(0.0, D - S)
+    D_eff = D - eta * gap
+    k = int((D_eff > S).sum())
     p = k / N_ITER * 100
     lo, hi = wilson_ci(k, N_ITER)
     return p, lo, hi
@@ -118,7 +138,8 @@ def main():
     for name, dr in SCENARIOS.items():
         supply_2030 = RBC_SUPPLY_2024 * (dr / DONATION_RATE_2024)
         p, lo, hi = mc_deficit_probability(
-            rng, rbc_demand_2030, RBC_DEMAND_UNC, supply_2030, RBC_SUPPLY_UNC)
+            rng, rbc_demand_2030, RBC_DEMAND_UNC, supply_2030, RBC_SUPPLY_UNC,
+            eta=RBC_ETA)
         results["rbc_scenarios"][name] = {
             "donation_rate_per_mille": dr,
             "supply_2030_wan": round(supply_2030, 1),
@@ -131,7 +152,8 @@ def main():
     plt_demand_2030 = PLT_SUPPLY_2024 * (1 + PLT_DEMAND_GROWTH) ** YEARS
     plt_supply_2030 = PLT_SUPPLY_2024 * (1 + PLT_SUPPLY_GROWTH) ** YEARS
     p, lo, hi = mc_deficit_probability(
-        rng, plt_demand_2030, PLT_DEMAND_UNC, plt_supply_2030, PLT_SUPPLY_UNC)
+        rng, plt_demand_2030, PLT_DEMAND_UNC, plt_supply_2030, PLT_SUPPLY_UNC,
+        eta=PLT_ETA)
     results["platelets"] = {
         "demand_2030_wan": round(plt_demand_2030, 1),
         "supply_2030_wan": round(plt_supply_2030, 1),
@@ -164,7 +186,8 @@ def main():
         for name, dr in SCENARIOS.items():
             supply_2030 = RBC_SUPPLY_2024 * (dr / DONATION_RATE_2024)
             p, _, _ = mc_deficit_probability(
-                rng, demand_2030, RBC_DEMAND_UNC, supply_2030, RBC_SUPPLY_UNC)
+                rng, demand_2030, RBC_DEMAND_UNC, supply_2030, RBC_SUPPLY_UNC,
+                eta=RBC_ETA)
             row[name] = round(p, 1)
             line += f"{p:>12.1f}%"
         results["rbc_sensitivity"].append(row)
