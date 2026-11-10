@@ -56,7 +56,7 @@ def fig1():
                     arrowprops=dict(arrowstyle='-|>', color=color, lw=2.0, mutation_scale=18))
 
     box(0.4, 3.2, 2.9, 1.6, "D: Disease demand", "16 categories \u00d7 6 products\nD-BDC matrix\nD_k(t) = \u03a3 c_{d,k}\u00b7N_d(t) + \u03b5_k(t)", SKY)
-    box(3.7, 3.2, 2.5, 1.6, "P: Population", "Leslie-matrix projection\nage-specific fertility\n& mortality (UN WPP 2024)", GREEN)
+    box(3.7, 3.2, 2.5, 1.6, "P: Population", "population ageing projection\n65+ share 15.9% \u2192 20%\n(UN WPP 2024)", GREEN)
     box(6.6, 3.2, 3.0, 1.6, "S: Supply capacity", "2024 baseline\n28.2 M units whole blood\n0.285 M platelet doses", ORANGE)
     box(3.7, 0.6, 5.9, 1.5, "Elasticity feedback", "\u03b7 = 0.15 (red cells), 0.05 (platelets)\ndemand adjusted when supply constrained", "#DDDDDD")
 
@@ -67,7 +67,7 @@ def fig1():
     ax.text(7.6, 2.45, "constraint", fontsize=8, color=GREY, style='italic',
             ha='center', bbox=dict(boxstyle='round,pad=0.2', fc='white', ec='none', alpha=0.9))
 
-    ax.text(0.4, 0.15, "Fig. 1. DPS-CM framework: disease demand (D), population evolution (P), and supply capacity (S)\ncoupled with demand-elasticity feedback.", fontsize=8.5, style='italic', color=GREY)
+    ax.text(0.4, 0.15, "Fig. 1. DPS-CM framework: disease demand (D), population ageing projection (P), and supply capacity (S)\ncoupled with demand-elasticity feedback.", fontsize=8.5, style='italic', color=GREY)
     save(fig, "Fig1_DPS-CM_framework")
 
 # ============ Fig 2: Historical trends + hindcast ============

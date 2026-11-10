@@ -72,5 +72,31 @@
       "recovery": 77.1,
       "decline": 95.3
     }
+  ],
+  "rbc_eta_sensitivity": [
+    {
+      "eta": 0.0,
+      "baseline": 78.5,
+      "recovery": 67.0,
+      "decline": 91.3
+    },
+    {
+      "eta": 0.15,
+      "baseline": 78.3,
+      "recovery": 67.0,
+      "decline": 91.1
+    },
+    {
+      "eta": 0.3,
+      "baseline": 78.2,
+      "recovery": 66.7,
+      "decline": 91.0
+    },
+    {
+      "eta": 0.5,
+      "baseline": 78.1,
+      "recovery": 66.4,
+      "decline": 91.3
+    }
   ]
 }

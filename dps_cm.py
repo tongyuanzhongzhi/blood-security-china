@@ -193,6 +193,25 @@ def main():
         results["rbc_sensitivity"].append(row)
         print(line)
 
+    # ---- Sensitivity: demand-elasticity coefficient (eta) ----
+    print("\n" + "-" * 72)
+    print("Sensitivity: red-cell deficit probability vs demand elasticity (eta)")
+    print("(eta < 1 reduces deficit magnitude but not the binary outcome)")
+    print(f"{'eta':<12}{'baseline':>12}{'recovery':>12}{'decline':>12}")
+    results["rbc_eta_sensitivity"] = []
+    for eta in [0.0, 0.15, 0.3, 0.5]:
+        row = {"eta": eta}
+        line = f"{eta:.2f}"
+        for name, dr in SCENARIOS.items():
+            supply_2030 = RBC_SUPPLY_2024 * (dr / DONATION_RATE_2024)
+            p, _, _ = mc_deficit_probability(
+                rng, rbc_demand_2030, RBC_DEMAND_UNC, supply_2030, RBC_SUPPLY_UNC,
+                eta=eta)
+            row[name] = round(p, 1)
+            line += f"{p:>12.1f}%"
+        results["rbc_eta_sensitivity"].append(row)
+        print(line)
+
     with open("monte_carlo_results.json", "w") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
     print("\nSaved monte_carlo_results.json")
