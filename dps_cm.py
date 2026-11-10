@@ -325,16 +325,19 @@ def make_figures(results):
     ax.plot(dr_grid, curve, color="#2C3E50", lw=2.5,
             label="Logistic dose–response (calibrated to Monte-Carlo scenarios)")
     scen_colors = {"decline": "#C0392B", "baseline": "#E69F00", "recovery": "#27AE60"}
+    annot_offsets = {"decline": (-0.2, -12), "baseline": (0.2, 7), "recovery": (0.2, 7)}
     for name in ["decline", "baseline", "recovery"]:
         dr = SCENARIOS[name]; p = rbc[name]["deficit_probability_pct"]
         ax.scatter([dr], [p], s=120, color=scen_colors[name], edgecolor="black",
                    lw=1.2, zorder=5)
+        dx, dy = annot_offsets[name]
         ax.annotate(f"{name.title()}\n({dr}‰)\n{p:.1f}%", xy=(dr, p),
-                    xytext=(dr + 0.15, p + 8), fontsize=9, fontweight="bold",
+                    xytext=(dr + dx, p + dy), fontsize=9, fontweight="bold",
+                    va=("top" if dy < 0 else "bottom"),
                     color=scen_colors[name],
                     arrowprops=dict(arrowstyle="-", color=scen_colors[name], lw=0.8))
     ax.axhline(50, color="gray", ls="--", lw=1.2, alpha=0.7)
-    ax.text(13.0, 51.5, "50% threshold", fontsize=8, color="gray", ha="right")
+    ax.text(13.0, 53, "50% threshold", fontsize=8, color="gray", ha="right")
     ax.set_xlabel("National blood-donation rate (per 1,000 population, ‰)", fontsize=11)
     ax.set_ylabel("Projected 2030 RBC deficit probability (%)", fontsize=11)
     ax.set_title("RBC deficit probability vs donation-rate scenario (2025–30)",

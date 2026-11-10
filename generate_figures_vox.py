@@ -64,8 +64,8 @@ def fig1():
     arrow(6.2, 4.0, 6.6, 4.0)   # P -> S
     arrow(8.1, 3.2, 6.9, 2.1)   # S -> feedback (down)
     arrow(3.7, 2.1, 2.0, 3.2)   # feedback -> D (back up)
-    ax.text(7.6, 2.45, "constraint", fontsize=8, color=GREY, style='italic',
-            ha='center', bbox=dict(boxstyle='round,pad=0.2', fc='white', ec='none', alpha=0.9))
+    ax.text(8.3, 2.8, "constraint", fontsize=8, color=GREY, style='italic',
+            ha='left', bbox=dict(boxstyle='round,pad=0.2', fc='white', ec='none', alpha=0.9))
 
     ax.text(0.4, 0.15, "Fig. 1. DPS-CM framework: disease demand (D), population ageing projection (P), and supply capacity (S)\ncoupled with demand-elasticity feedback.", fontsize=8.5, style='italic', color=GREY)
     save(fig, "Fig1_DPS-CM_framework")
