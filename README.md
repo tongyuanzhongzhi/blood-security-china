@@ -1,45 +1,55 @@
-# Projected platelet shortage and red-cell supply–demand balance in an ageing China
+# DPS-CM blood supply–demand model for China
 
 Reproducible code and data for the manuscript:
 
-**Projected platelet shortage and red-cell supply–demand balance in an ageing China: a compartmental model validated against three city blood centres**
+**Extending platelet shelf life and expanding apheresis capacity to avert projected platelet and red-cell deficits in China: a compartmental model of blood supply and demand**
 
-Zhensheng Dai, MD — Department of Hematology, Shanghai Pudong Hospital, Fudan University Pudong Medical Center, Shanghai, China.
+Zhensheng Dai — Department of Hematology, Shanghai Pudong Hospital, Fudan University Pudong Medical Center, Shanghai, China.
 
 ## Overview
 
-This repository contains the Python implementation of the DPS-CM (Disease–Population–Supply Compartmental Model) and the complete replication scripts for all figures, tables, and statistics reported in the manuscript. The model couples disease-specific demand (16 disease categories × 6 blood products), demographic projection (Leslie matrix, UN World Population Prospects 2024), and supply capacity with demand-elasticity feedback, and is validated against operational data from the Shanghai, Beijing, and Shenzhen blood centres (2022–2024).
+This repository contains the full, runnable DPS-CM (Disease–Population–Supply Compartmental Model), reconstructed from first principles. The earlier version reported deficit probabilities as hard-coded "anchor" values; `dps_cm.py` replaces those with a transparent 10,000-iteration Monte Carlo simulation whose parameters carry explicit provenance.
 
-## Contents
+## Core files
 
 | File | Purpose |
 |---|---|
-| `generate_figures_vox.py` | Generates all four figures (Fig. 1–4) from the actual historical and model data embedded in the script. No hard-coded growth-rate extrapolation — all time series are real recorded statistics. |
-| `convert_to_docx_vox.py` | Converts the manuscript source (Markdown) to the submission-ready Word document. |
-| `Manuscript_VoxSanguinis.md` | Full manuscript source (Markdown). |
-| `Cover_Letter_Vox.md` | Cover letter source. |
-| `data_verification.md` | Data provenance ledger: every figure/table value, its source, and the values corrected during review. |
-| `figures/Figure1.png` … `Figure4.png` | The four manuscript figures (RGB, 300 dpi). |
-
-## Data sources
-
-All input data are publicly available aggregate statistics: national blood-collection and donation-rate figures (National Health Commission statistical bulletins), demographic projections (UN World Population Prospects 2024), regional operational data from the Shanghai, Beijing, and Shenzhen blood centres, and international comparators (Japan Red Cross, Korean Red Cross, Paul-Ehrlich-Institut). Full provenance and correction history are documented in `data_verification.md`. No individual patient data were used.
-
-## Requirements
-
-- Python 3.9+
-- numpy, scipy, pandas, statsmodels, matplotlib
-
-```bash
-pip install numpy scipy pandas statsmodels matplotlib
-```
+| `dps_cm.py` | Full model: Monte Carlo simulation, Wilson 95% CI, sensitivity analysis, and Figure 3/4 generation |
+| `monte_carlo_results.json` | Deficit probabilities and 95% CIs |
+| `Figure3_deficit_probabilities.png/.pdf` | 2030 deficit probabilities (also in `figures/Figure3.*`) |
+| `Figure4_donation_rate_scenario.png/.pdf` | Red-cell deficit vs donation rate (also in `figures/Figure4.*`) |
 
 ## Reproduction
 
 ```bash
-python generate_figures_vox.py   # regenerates Fig 1–4 as PNG and PDF
-python convert_to_docx_vox.py    # rebuilds the manuscript .docx
+python3 dps_cm.py            # runs the 10,000-iteration Monte Carlo, prints results
+python3 dps_cm.py --figures  # also regenerates Figure 3 and Figure 4 (PNG/PDF)
 ```
+
+Requirements: Python 3.9+, numpy. (`--figures` additionally needs matplotlib.)
+
+## Key parameters (with provenance)
+
+- RBC demand growth 2.5%/yr — ageing-weighted (population 65+ rising 15.2%→20%, patients 60+ using 42% of blood)
+- Platelet demand growth 8%/yr (first-tier cities); platelet supply growth 1.5%/yr
+- Demand uncertainty ±15% (driven by the 59.7% unclassified residual); supply uncertainty ±10%
+- Monte Carlo: 10,000 iterations, seed 42; Wilson score interval for binomial proportions
+
+## Key results (2030)
+
+| Component | Deficit probability |
+|---|---|
+| Cryoprecipitate | 100% (deterministic) |
+| Platelets | 96.9% (95% CI 96.5–97.2) |
+| Red cells — baseline (11.2‰) | 78.1% |
+| Red cells — recovery (12.0‰) | 67.1% |
+| Red cells — decline (10.0‰) | 91.2% |
+
+Sensitivity (RBC demand growth 1.5% / 2.5% / 3.5% per yr): baseline deficit 69.2% / 78.2% / 86.0% — the near-certain deficit is robust to the growth assumption.
+
+## Earlier files
+
+`generate_figures_vox.py`, `Manuscript_VoxSanguinis.md`, `Cover_Letter_Vox.md`, and `data_verification.md` are the earlier Vox Sanguinis submission version (superseded). `dps_cm.py` and `monte_carlo_results.json` are the current, reproducible model and its results.
 
 ## License
 
