@@ -98,5 +98,25 @@
       "recovery": 66.4,
       "decline": 91.3
     }
+  ],
+  "rbc_residual_sensitivity": [
+    {
+      "residual_growth": 0.01,
+      "baseline": 70.0,
+      "recovery": 56.0,
+      "decline": 86.8
+    },
+    {
+      "residual_growth": 0.025,
+      "baseline": 78.8,
+      "recovery": 66.0,
+      "decline": 91.6
+    },
+    {
+      "residual_growth": 0.04,
+      "baseline": 85.7,
+      "recovery": 76.3,
+      "decline": 95.0
+    }
   ]
 }

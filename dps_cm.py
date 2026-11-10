@@ -212,6 +212,28 @@ def main():
         results["rbc_eta_sensitivity"].append(row)
         print(line)
 
+    # ---- Sensitivity: residual-demand growth rate ----
+    print("\n" + "-" * 72)
+    print("Sensitivity: red-cell deficit vs residual-demand growth")
+    print("(classified demand fixed at 2.5%/yr; residual sweeps +/-1.5%pt)")
+    print(f"{'resid growth':<14}{'baseline':>12}{'recovery':>12}{'decline':>12}")
+    results["rbc_residual_sensitivity"] = []
+    classified_2030 = RBC_CAPTURED_2024 * (1 + RBC_DEMAND_GROWTH) ** YEARS
+    for rg in [0.010, 0.025, 0.040]:
+        residual_2030 = RBC_RESIDUAL_2024 * (1 + rg) ** YEARS
+        total_2030 = classified_2030 + residual_2030
+        row = {"residual_growth": rg}
+        line = f"{rg*100:.1f}%/yr"
+        for name, dr in SCENARIOS.items():
+            supply_2030 = RBC_SUPPLY_2024 * (dr / DONATION_RATE_2024)
+            p, _, _ = mc_deficit_probability(
+                rng, total_2030, RBC_DEMAND_UNC, supply_2030, RBC_SUPPLY_UNC,
+                eta=RBC_ETA)
+            row[name] = round(p, 1)
+            line += f"{p:>12.1f}%"
+        results["rbc_residual_sensitivity"].append(row)
+        print(line)
+
     with open("monte_carlo_results.json", "w") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
     print("\nSaved monte_carlo_results.json")
